@@ -5,6 +5,7 @@ using MinimalApi.Dominio.Servicos;
 using MinimalApi.Dominio.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using MinimalApi.Dominio.ModelViews;
+using MinimalApi.Dominio.Entidades;
 
 #region Builder
 
@@ -50,15 +51,33 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
 #region Veiculos
 app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
-    if (administradorServico.Login(loginDTO) != null)
+
+    var veiculo = new Veiculo
     {
-        return Results.Ok("Login realizado com sucesso!");
-    }
-    else
-    {
-        return Results.Unauthorized();
-    }
+        Nome = veiculoDTO.Nome,
+        Marca = veiculoDTO.Marca,
+        Ano = veiculoDTO.Ano
+
+    };
+
+    veiculoServico.Incluir(veiculo);
+
+    return Results.Created($"/veiculo/{veiculo.Id}", veiculo);
+
 });
+
+app.MapGet("/veiculos", ([FromQuery]int? pagina, IVeiculoServico veiculoServico) =>
+{
+    var veiculos = veiculoServico.Todos(pagina)
+   
+
+    return Results.Created($"/veiculo/{veiculo.Id}", veiculo);
+
+});
+
+
+
+
 #endregion
 
 #region  App
