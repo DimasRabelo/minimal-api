@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MinimalApi.Dominio.Servicos;
 using MinimalApi.Dominio.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using MinimalApi.Dominio.ModelViews;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,7 @@ builder.Services.AddDbContext<DbContexto>(options =>
 var app = builder.Build();
 
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => Results.Json(new Home()));
 
 // Rota de login de exemplo
 app.MapPost("/login", ([FromBody] LoginDTO loginDTO, IAdministradorServico administradorServico) =>
