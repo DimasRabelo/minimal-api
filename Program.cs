@@ -9,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IAdministradorServico, AdministradorServico>();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
 // Configuração do DbContext
 builder.Services.AddDbContext<DbContexto>(options =>
 {
@@ -18,10 +22,11 @@ builder.Services.AddDbContext<DbContexto>(options =>
 
 var app = builder.Build();
 
+
 app.MapGet("/", () => "Hello World!");
 
 // Rota de login de exemplo
-app.MapPost("/login", ([FromBody]LoginDTO loginDTO, IAdministradorServico administradorServico) =>
+app.MapPost("/login", ([FromBody] LoginDTO loginDTO, IAdministradorServico administradorServico) =>
 {
     if (administradorServico.Login(loginDTO) != null)
     {
@@ -32,6 +37,10 @@ app.MapPost("/login", ([FromBody]LoginDTO loginDTO, IAdministradorServico admini
         return Results.Unauthorized();
     }
 });
+
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();
 
