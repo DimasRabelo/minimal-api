@@ -52,8 +52,9 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
 
  ErrosDeValidacao validaDTO(VeiculoDTO veiculoDTO)
 {
-    var validacao = new ErrosDeValidacao();
-
+    var validacao = new ErrosDeValidacao {
+        Mensagens = new List<string>()
+    };
     if (string.IsNullOrEmpty(veiculoDTO.Nome))
         validacao.Mensagens.Add("O nome não pode ser vazio");
 
@@ -68,7 +69,8 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
 
 app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
-    var validacao = validaDTO(veiculoDTO);
+
+ var validacao = validaDTO(veiculoDTO);
     if (validacao.Mensagens.Count > 0)
         return Results.BadRequest(validacao);
 
@@ -109,6 +111,10 @@ app.MapPut("/veiculos/{id}", ([FromRoute] int id, VeiculoDTO veiculoDTO, IVeicul
     var veiculo = veiculoServico.BuscaPorId(id);
 
     if (veiculo == null) return Results.NotFound();
+
+     var validacao = validaDTO(veiculoDTO);
+    if (validacao.Mensagens.Count > 0)
+        return Results.BadRequest(validacao);
 
     veiculo.Nome = veiculoDTO.Nome;
     veiculo.Marca = veiculoDTO.Marca;
