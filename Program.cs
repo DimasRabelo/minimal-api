@@ -48,7 +48,7 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
     }
 }).WithTags("Administradores");
 
-app.MapGet("/administradores", ([FromQuery] int pagina, IAdministradorServico administradorServico) =>
+app.MapGet("/administradores", ([FromQuery] int? pagina, IAdministradorServico administradorServico) =>
 {
     return Results.Ok(administradorServico.Todos(pagina));
 }).WithTags("Administradores");
