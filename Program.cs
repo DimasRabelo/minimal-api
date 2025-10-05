@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using MinimalApi.Dominio.ModelViews;
 using MinimalApi.Dominio.Entidades;
 using MinimalApi.Dominio.Enuns;
+using minimal_api.Dominio.ModelViews;
 
 #region Builder
 
@@ -50,7 +51,18 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
 
 app.MapGet("/administradores", ([FromQuery] int? pagina, IAdministradorServico administradorServico) =>
 {
-    return Results.Ok(administradorServico.Todos(pagina));
+    var adms = new List<AdministradorModelView>();
+    var administradores = administradorServico.Todos(pagina);
+    foreach (var adm in administradores)
+    {
+        adms.Add(new AdministradorModelView
+        {
+             Id = adm.Id,
+            Email = adm.Email,
+           Perfil = adm.Perfil
+        });
+    }
+    return Results.Ok(adms);
 }).WithTags("Administradores");
 
 app.MapGet("/Administradores/{id}", ([FromRoute] int id, IAdministradorServico administradorServico) =>
