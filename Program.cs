@@ -71,7 +71,12 @@ app.MapGet("/Administradores/{id}", ([FromRoute] int id, IAdministradorServico a
 
     if (administrador == null) return Results.NotFound();
 
-    return Results.Ok(administrador);
+    return Results.Ok(new AdministradorModelView
+        {
+             Id = administrador.Id,
+            Email = administrador.Email,
+           Perfil = administrador.Perfil
+        });
 
 }).WithTags("Administradores");
 
@@ -103,7 +108,12 @@ app.MapPost("/administradores", ([FromBody] AdministradorDTO administradorDTO, I
 
     administradorServico.Incluir(administrador);
 
-    return Results.Created($"/administrador/{administrador.Id}", administrador);
+    return Results.Created($"/administrador/{administrador.Id}", new AdministradorModelView
+        {
+             Id = administrador.Id,
+            Email = administrador.Email,
+           Perfil = administrador.Perfil
+        });
 
 }).WithTags("Administradores");
 #endregion
