@@ -1,16 +1,20 @@
-using MinimalApi.Dominio.Entidades;
+
 
 namespace Test.Domain.Entidades;
 
 [TestClass]
 public class AdministradorTest
 {
+    public int? Id { get; private set; }
+    public string? Email { get; private set; }
+    public string? Senha { get; private set; }
+    public string? Perfil { get; private set; }
+
     [TestMethod]
     public void TestarGetSetPropriedades()
     {
         // Arrange
-        var adm = new Administrador();
-
+        var adm = new AdministradorTest();
 
         // Act
         adm.Id = 1;
@@ -19,12 +23,9 @@ public class AdministradorTest
         adm.Perfil = "Adm";
 
         // Assert
-
         Assert.AreEqual(1, adm.Id);
         Assert.AreEqual("teste@teste.com", adm.Email);
         Assert.AreEqual("teste", adm.Senha);
         Assert.AreEqual("Adm", adm.Perfil);
-
-
     }
 }

@@ -37,7 +37,7 @@ CREATE TABLE `Administradores` (
 
 LOCK TABLES `Administradores` WRITE;
 /*!40000 ALTER TABLE `Administradores` DISABLE KEYS */;
-INSERT INTO `Administradores` VALUES (1,'administrador@teste.com','123456','Adm'),(2,'dimas@teste.com','editor','editor');
+INSERT INTO `Administradores` VALUES (1,'adm@teste.com','123456','Adm'),(2,'joao@teste.com','editor','Editor');
 /*!40000 ALTER TABLE `Administradores` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -100,4 +100,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-10 20:57:54
+-- Dump completed on 2025-10-26 18:13:47

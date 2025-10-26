@@ -1,62 +1,83 @@
-using System.Reflection;
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MinimalApi.Dominio.Entidades;
 using MinimalApi.Dominio.Servicos;
 using MinimalApi.Infraestrutura.Db;
+using System.IO;
 
-namespace Test.Domain.Servicos;
-
-[TestClass]
-public class AdministradorServicoTest
+namespace Test.Domain.Entidades
 {
-
-    private DbContexto CriarContextoDeTeste()
+    [TestClass]
+    public class AdministradorServicoTest
     {
-        var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        var path = Path.GetFullPath(Path.Combine(assemblyPath ?? "", "..","..",".."));
+        private DbContexto CriarContextoDeTeste()
+        {
+            // Carrega o appsettings.json do próprio projeto de teste
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables();
 
-        // Configurar o ConfigurationBuilder para carregar o appsettings.json
-        var builder = new ConfigurationBuilder()
-            .SetBasePath(path ?? Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddEnvironmentVariables();
+            var configuration = builder.Build();
 
-        var configuration = builder.Build();
+            // Cria o DbContext passando a configuração
+            return new DbContexto(configuration);
+        }
 
-        return new DbContexto(configuration);
-    }
-   
-   
-   
-   
-    [TestMethod]
-    public void TestandoBuscaPorId()
-    { 
-        // Arrange
-        var context = CriarContextoDeTeste();
-        context.Database.ExecuteSqlRaw("TRUNCATE TABLE Administradores");
+        [TestInitialize]
+        public void LimparTabela()
+        {
+            var contexto = CriarContextoDeTeste();
+            // Limpa a tabela para testes limpos
+            contexto.Database.ExecuteSqlRaw("TRUNCATE TABLE Administradores");
+        }
 
-       var adm = new Administrador();
-        adm.Email = "teste@teste.com";
-        adm.Senha = "teste";
-        adm.Perfil = "Adm";
+        [TestMethod]
+        public void TestandoSalvarAdministrador()
+        {
+            var contexto = CriarContextoDeTeste();
 
-        
-        var administradorServico = new AdministradorServico(context);
+            var adm = new Administrador
+            {
+                Email = "teste@teste.com",
+                Senha = "teste",
+                Perfil = "Adm"
+            };
 
+            var service = new AdministradorServico(contexto);
 
+            // Act
+            service.Incluir(adm);
 
-        // Act
+            // Assert
+            var todos = service.Todos(1);
+            Assert.AreEqual(1, todos.Count);
+            Assert.AreEqual("teste@teste.com", todos[0].Email);
+        }
 
-        administradorServico.Incluir(adm);
-        var admDobanco  = administradorServico.BuscaPorId(adm.Id);
+        [TestMethod]
+        public void TestandoBuscaPorId()
+        {
+            var contexto = CriarContextoDeTeste();
 
-        // Assert
+            var adm = new Administrador
+            {
+                Email = "teste@teste.com",
+                Senha = "teste",
+                Perfil = "Adm"
+            };
 
-        Assert.IsNotNull(admDobanco);
-        
+            var service = new AdministradorServico(contexto);
+            service.Incluir(adm);
 
+            // Act
+            var admDoBanco = service.BuscaPorId(adm.Id);
 
+            // Assert
+            Assert.IsNotNull(admDoBanco);
+            Assert.AreEqual("teste@teste.com", admDoBanco.Email);
+        }
     }
 }
