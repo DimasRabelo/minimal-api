@@ -8,15 +8,15 @@ public class DbContexto : DbContext
 {
     private readonly IConfiguration? _configuracaoAppSettings;
 
-    // Construtor de produção
-    public DbContexto(IConfiguration configuracaoAppSettings)
-    {
-        _configuracaoAppSettings = configuracaoAppSettings;
-    }
-
-    // Construtor para testes
+    // Construtor usado pelo DI/produção
     public DbContexto(DbContextOptions<DbContexto> options) : base(options)
     {
+    }
+
+    // Construtor apenas para testes
+    internal DbContexto(IConfiguration configuracaoAppSettings)
+    {
+        _configuracaoAppSettings = configuracaoAppSettings;
     }
 
     public DbSet<Administrador> Administradores { get; set; } = default!;

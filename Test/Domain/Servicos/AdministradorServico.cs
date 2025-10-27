@@ -1,11 +1,10 @@
-using System;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MinimalApi.Dominio.Entidades;
 using MinimalApi.Dominio.Servicos;
 using MinimalApi.Infraestrutura.Db;
-using System.IO;
 
 namespace Test.Domain.Entidades
 {
@@ -14,7 +13,7 @@ namespace Test.Domain.Entidades
     {
         private DbContexto CriarContextoDeTeste()
         {
-            // Carrega o appsettings.json do próprio projeto de teste
+            // Cria IConfiguration a partir do appsettings.json que está no bin
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -22,22 +21,17 @@ namespace Test.Domain.Entidades
 
             var configuration = builder.Build();
 
-            // Cria o DbContext passando a configuração
+            // Usa o construtor interno do DbContexto (MySQL real)
             return new DbContexto(configuration);
-        }
-
-        [TestInitialize]
-        public void LimparTabela()
-        {
-            var contexto = CriarContextoDeTeste();
-            // Limpa a tabela para testes limpos
-            contexto.Database.ExecuteSqlRaw("TRUNCATE TABLE Administradores");
         }
 
         [TestMethod]
         public void TestandoSalvarAdministrador()
         {
             var contexto = CriarContextoDeTeste();
+
+            // Limpa a tabela para teste limpo
+            contexto.Database.ExecuteSqlRaw("TRUNCATE TABLE Administradores");
 
             var adm = new Administrador
             {
@@ -47,11 +41,8 @@ namespace Test.Domain.Entidades
             };
 
             var service = new AdministradorServico(contexto);
-
-            // Act
             service.Incluir(adm);
 
-            // Assert
             var todos = service.Todos(1);
             Assert.AreEqual(1, todos.Count);
             Assert.AreEqual("teste@teste.com", todos[0].Email);
@@ -61,6 +52,7 @@ namespace Test.Domain.Entidades
         public void TestandoBuscaPorId()
         {
             var contexto = CriarContextoDeTeste();
+            contexto.Database.ExecuteSqlRaw("TRUNCATE TABLE Administradores");
 
             var adm = new Administrador
             {
@@ -72,10 +64,7 @@ namespace Test.Domain.Entidades
             var service = new AdministradorServico(contexto);
             service.Incluir(adm);
 
-            // Act
             var admDoBanco = service.BuscaPorId(adm.Id);
-
-            // Assert
             Assert.IsNotNull(admDoBanco);
             Assert.AreEqual("teste@teste.com", admDoBanco.Email);
         }

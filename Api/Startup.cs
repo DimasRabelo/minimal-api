@@ -107,7 +107,19 @@ public class Startup
         app.UseEndpoints(endpoints => {
 
             #region Home
-            endpoints.MapGet("/", () => Results.Json(new Home())).AllowAnonymous().WithTags("Home");
+         endpoints.MapGet("/", async context =>
+{
+    context.Response.ContentType = "text/html; charset=utf-8";
+    await context.Response.WriteAsync(@"
+        <html>
+            <head><title>Minimal API</title></head>
+            <body style='font-family:sans-serif; padding:20px'>
+                <h2>🚗 Bem vindo à API de Veículos - Minimal API</h2>
+                <p>Documentação Disponível em <a href='/swagger'>/swagger</a></p>
+            </body>
+        </html>
+    ");
+}).AllowAnonymous().WithTags("Home");
             #endregion
 
             #region Administradores

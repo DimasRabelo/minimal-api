@@ -2,7 +2,6 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using minimal_api.Dominio.ModelViews;
-using MinimalApi.Dominio.ModelViews;
 using MinimalApi.DTOS;
 using Test.Helpers;
 

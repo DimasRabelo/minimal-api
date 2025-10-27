@@ -8,7 +8,7 @@ namespace Test.Helpers;
 
 public class Setup
 {
-    public const string PORT = "5001";
+    public const string PORT = "5179";
     public static TestContext testContext = default!;
     public static WebApplicationFactory<Startup> http = default!;
     public static HttpClient client = default!;
